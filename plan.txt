@@ -1,0 +1,13 @@
+3 regeln:
+
+- abstand halten (formel mit je näher desto mehr abstand, mit max radius wo überhaupt abstand ist)
+	- level in quadrate unterteilen zum abstand checken
+
+- selbe richtung und richtung mitte, formeln erfinden
+
+eigenschaften eines objekts
+- x,y,vx,vy
+- welcher schwarm zugehörig
+- health
+- status
+- ad, as
