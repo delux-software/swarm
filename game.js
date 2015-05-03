@@ -1,52 +1,62 @@
-var cv1, cx1, cv2, cx2, scX, scY, FPSMan;
-
-var cloud_x, cloud_move = 1, background, cloud;
-
+var cv1, cx1, cv2, cx2, scX, scY;     // canvas 1, buffer 1, canvas 2, buffer 2, screen width, screen height
+var updatesPerCycle = 1;              // increase for multiple calculation rounds per draw round
+var FPSManagerDraw, FPSManagerUpdate; // 2 managers to calculate drawing frames per second and calculation rounds per second
+var swarmId = 0, entityId = 0;
+var swarm1;
+var gridSize = 100;
+var grid = null;
+// ================================================================================ init() - game init - call this to restart everything
 function init() {
-	initCanvas();       // init the canvas and double buffering (gameHelper)
-	FPSManager.init();  // init FPSManager
+	initCanvas();                         // init the canvas 1 & 2 for double buffering (gameHelper.js)
+	FPSManagerDraw = new FPSManager();    // fps calculator for draws per second
+	FPSManagerUpdate = new FPSManager();  // fps calculator for updates per second
+	grid = new grid();                    // init new grid
+	grid.init(gridSize);
+	setTimeout( loop, 100 );              // give the game 0,1 sec to load: reduces flickering at start
+	swarmId = 0;
+	entityId = 0;
 
-	cloud_x = 1;
+	// ------------------------------------------ spawn some fish
+	swarm1 = new swarm();
+	var spawn = 10;
+	var dist = 500 / spawn;
 
-	// init background
-	background = new Image();
-	background.src = './img/forest.png';
-	background.onload = function() {
+	for ( var i = 0; i < spawn; i++) {
+		for ( var j = 0; j < spawn; j++) {
+			swarm1.add(50+i*dist,50+j*dist);
+		}
 	}
 
-	setTimeout(update,100);
 
-
-	//update();
 }
+// ================================================================================ loop() - handles the game loop
+function loop() {
+	for( var i = 0; i < updatesPerCycle; i++ ) { update(); }    // update x times before drawing
+	draw();                                                     // then draw
+}
+// ================================================================================ update() - main game loop
 function update() {
-	cloud_x += cloud_move;
-	if( cloud_x > 640 - 256 || cloud_x <= 0 ) {
-		cloud_move = -cloud_move;
-	}
 
-	draw();
+	// end of update
+	FPSManagerUpdate.update();
+	grid.clear();
+	swarm1.update();
 }
-
+// ================================================================================ draw() - draw
 function draw() {
-	cx2.drawImage( background, 0, 0 );
-	cx2.drawImage( background, 950, 600 );
+	// draw blackground
+	cx2.fillStyle = rgb( 0, 0, 0 );
+	cx2.fillRect( 0, 0, scX, scY );
 
-	//ctx.drawImage( cloud, cloud_x, 0 );
+	// draw grid
+	grid.draw();
 
-	var max = 256;
-	for( var i = 0; i < max; i++ ) {
-		var r = 155, g = 120, b = i;
+	// draw swarm
+	swarm1.draw();
 
-		g = Math.floor( cloud_x * 255 / (640 - 256) );
-		//console.log(g);
-
-		cx2.fillStyle = rgb(r,g,b);
-		cx2.fillRect( cloud_x + i, 100, 1, 255 );
-	}
-
-	cx1.drawImage( cv2, 0, 0 );
-
-	FPSManager.update();
-	requestAnimationFrame( update );
+	// end of draw
+	cx1.drawImage( cv2, 0, 0 );     // draw backbuffer to frontbuffer
+	FPSManagerDraw.update();        // calculate frames per second
+	document.getElementById( "fpsviewer" ).innerHTML = "(" + FPSManagerUpdate.currentFPS.toString() + ") " + FPSManagerDraw.currentFPS.toString();
+	requestAnimationFrame( loop );  // wait for browser to trigger the loop again (should results in 60 FPS)
 }
