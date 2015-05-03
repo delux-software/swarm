@@ -1,0 +1,7 @@
+* { margin : 0; padding : 0; }
+div.table { display : table; }
+div.row { display : table-row; }
+div.cell { display : table-cell; }
+div.controls { width : 200px; vertical-align : top; }
+div.canvas { }
+div.label { width : 100px; }

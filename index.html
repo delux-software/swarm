@@ -1,69 +1,29 @@
 <html>
 <head>
-	<script type="text/javascript">
-		var canvas,buffer;
-		var ctx;
-		var background;
-		var width = 300;
-		var height = 200;
-		var cloud;
-		var cloud_x;
-		var cloud_move = 1;
-		function init() {
-			canvas = document.getElementById( "canvas" );
-			buffer = document.createElement('canvas');
-			buffer.width = canvas.width;
-			buffer.height = canvas.height;
-
-			width = canvas.width;
-			height = canvas.height;
-			ctx = buffer.getContext( "2d" );
-			// init background
-			background = new Image();
-			background.src = 'http://silveiraneto.net/wp-content/uploads/2011/06/forest.png';
-			// init cloud
-			cloud = new Image();
-			cloud.src = 'http://silveiraneto.net/wp-content/uploads/2011/06/cloud.png';
-			cloud.onload = function() {
-				cloud_x = 0;//-cloud.width;
-			};
-			draw();
-			return setInterval( main_loop, 30 );
-		}
-		function update() {
-			/*cloud_x += 0.3;
-			if( cloud_x > width ) {
-				cloud_x = -cloud.width;
-			}*/
-		}
-		function draw() {
-			ctx.drawImage( background, 0, 0 );
-			//ctx.drawImage( cloud, cloud_x, 0 );
-
-			cloud_x+=cloud_move;
-			if ( cloud_x > 640-256 || cloud_x < 0) {
-				cloud_move = -cloud_move;
-			}
-
-			var max = 256;
-			for( var i = 0; i < max; i++ ) {
-				var r = 155, g = 120, b = i;
-
-				g = Math.floor( cloud_x * 255 / (640-256) );
-				//console.log(g);
-
-				ctx.fillStyle = "rgba(" + r + ", " + g + ", " + b + ", 1.0 )";
-				ctx.fillRect( cloud_x + i, 100, 1, 200 );
-			}
-
-			canvas.getContext('2d').drawImage(buffer, 0, 0);
-			requestAnimationFrame(draw);
-		}
-		function main_loop() {
-			update();
-		}
-	</script>
+	<script type="text/javascript" src="game.js"></script>
+	<script type="text/javascript" src="gameHelper.js"></script>
+	<script type="text/javascript" src="FPSManager.js"></script>
+	<link rel="stylesheet" href="style.css"/>
 </head>
-<body onload="init()"><h2>Canvas</h2>
-<canvas id="canvas" width="640" height="480">Alternative text if browser don't support canvas.</canvas>
+<body onload="init()">
+<div class="table">
+	<div class="row">
+		<div class="cell controls">
+			<h3>&gt;_ Swarm Simulator</h3>
+			<div class="table">
+				<div class="row">
+					<div class="cell label">
+						Rahmen/sec
+					</div>
+					<div class="cell">
+						<div id="fpsviewer">...</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="cell canvas">
+			<canvas id="canvas" width="1380" height="800">Alternative text if browser don't support canvas.</canvas>
+		</div>
+	</div>
+</div>
 </body>
